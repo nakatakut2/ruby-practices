@@ -2,7 +2,7 @@
 
 require 'etc'
 
-class LongFormatter
+class FileDetail
   attr_reader :file_name, :file_stat
 
   def initialize(file_name)
@@ -10,7 +10,7 @@ class LongFormatter
     @file_stat = File.stat(file_name)
   end
 
-  def file_type
+  def ftype
     ftype_key = File.ftype(file_name)
     types = { 'file' => '-', 'directory' => 'd', 'link' => 'l' }
     types[ftype_key]
@@ -42,7 +42,7 @@ class LongFormatter
     file_stat.mtime.strftime('%m %e %H:%M')
   end
 
-  def format
-    "#{file_type}#{permissions}#{nlink} #{owner}  #{group}#{size} #{mtime} #{file_name}"
+  def name
+    file_name
   end
 end
