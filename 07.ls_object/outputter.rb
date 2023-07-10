@@ -12,7 +12,7 @@ class Outputter
   end
 
   def output
-    format_files.each do |name|
+    formatted_names.each do |name|
       name.compact.each { |a| print a.ljust(30) }
       puts "\n"
     end
@@ -26,7 +26,7 @@ class Outputter
   end
 
   private
-  def format_files
+  def formatted_names
     total_number = file_names.size
     slice = total_number / COLUMNS
     slice += 1 unless (total_number % COLUMNS).zero?
