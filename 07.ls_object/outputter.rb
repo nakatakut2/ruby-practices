@@ -26,6 +26,7 @@ class Outputter
   end
 
   private
+
   def formatted_names
     total_number = file_names.size
     slice = total_number / COLUMNS
@@ -35,7 +36,7 @@ class Outputter
   end
 
   def total_blocks
-    file_names.map { |file_name| File.stat(file_name).blocks }.sum
+    file_names.map { |file_name| FileDetail.new(file_name).file_stat.blocks }.sum
   end
 
   def long_format(file)
