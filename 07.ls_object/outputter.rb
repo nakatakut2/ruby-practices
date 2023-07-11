@@ -3,8 +3,6 @@
 require_relative 'file_detail'
 
 class Outputter
-  attr_reader :file_names
-
   COLUMNS = 3
 
   def initialize(file_names)
@@ -20,7 +18,7 @@ class Outputter
 
   def long_option_output
     puts "total #{total_blocks}"
-    file_names.each do |file_name|
+    @file_names.each do |file_name|
       puts long_format(FileDetail.new(file_name)).join
     end
   end
@@ -28,31 +26,31 @@ class Outputter
   private
 
   def formatted_names
-    total_number = file_names.size
+    total_number = @file_names.size
     slice = total_number / COLUMNS
     slice += 1 unless (total_number % COLUMNS).zero?
-    names_slice = file_names.each_slice(slice).to_a
+    names_slice = @file_names.each_slice(slice).to_a
     names_slice[0].zip(*names_slice[1..])
   end
 
   def total_blocks
-    file_names.map { |file_name| FileDetail.new(file_name).file_stat.blocks }.sum
+    @file_names.map { |file_name| FileDetail.new(file_name).blocks }.sum
   end
 
   def long_format(file)
     [
       file.ftype,
       file.permissions,
-      file.nlink,
+      file.nlink.to_s.rjust(3),
       ' ',
       file.owner,
       '  ',
       file.group,
-      file.size,
+      file.size.to_s.rjust(6),
       ' ',
-      file.mtime,
+      file.mtime.strftime('%m %e %H:%M'),
       ' ',
-      file.name
+      file.file_name
     ]
   end
 end
