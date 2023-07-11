@@ -12,8 +12,8 @@ class Outputter
   end
 
   def output
-    formatted_names.each do |name|
-      name.compact.each { |a| print a.ljust(30) }
+    formatted_names.each do |names|
+      names.compact.each { |name| print name.ljust(30) }
       puts "\n"
     end
   end
