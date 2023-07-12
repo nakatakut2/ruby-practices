@@ -9,32 +9,35 @@ class Outputter
     @file_names = file_names
   end
 
-  def output
-    formatted_names.each do |names|
-      names.compact.each { |name| print name.ljust(30) }
-      puts "\n"
-    end
-  end
-
-  def long_option_output
-    puts "total #{total_blocks}"
-    @file_names.each do |file_name|
-      puts long_format(FileDetail.new(file_name)).join
+  def output(long: false)
+    if long
+      puts "total #{total_blocks}"
+      @file_names.each do |file_name|
+        puts long_format(file_detail(file_name))
+      end
+    else
+      formatted_names.each do |names|
+        names.compact.each { |name| print name.ljust(30) }
+        puts "\n"
+      end
     end
   end
 
   private
 
+  def file_detail(file_name)
+    FileDetail.new(file_name)
+  end
+
   def formatted_names
     total_number = @file_names.size
-    slice = total_number / COLUMNS
-    slice += 1 unless (total_number % COLUMNS).zero?
-    names_slice = @file_names.each_slice(slice).to_a
-    names_slice[0].zip(*names_slice[1..])
+    slice = (total_number / COLUMNS).ceil
+    molding_array = @file_names.each_slice(slice).to_a
+    molding_array[0].zip(*molding_array[1..])
   end
 
   def total_blocks
-    @file_names.map { |file_name| FileDetail.new(file_name).blocks }.sum
+    @file_names.sum { |file_name| file_detail(file_name).blocks }
   end
 
   def long_format(file)
@@ -50,7 +53,7 @@ class Outputter
       ' ',
       file.mtime.strftime('%m %e %H:%M'),
       ' ',
-      file.file_name
-    ]
+      file.name
+    ].join
   end
 end

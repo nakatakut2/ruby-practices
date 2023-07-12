@@ -3,47 +3,47 @@
 require 'etc'
 
 class FileDetail
-  attr_reader :file_name
+  attr_reader :name
 
   TYPES = { 'file' => '-', 'directory' => 'd', 'link' => 'l' }.freeze
   PERMISSIONS = { '0' => '---', '1' => '--X', '2' => '-w-', '3' => '-wx', '4' => 'r--', '5' => 'r-x', '6' => 'rw-', '7' => 'rwx' }.freeze
 
-  def initialize(file_name)
-    @file_name = file_name
-    @file_stat = File.stat(file_name)
+  def initialize(name)
+    @name = name
+    @stat = File.stat(name)
   end
 
   def blocks
-    @file_stat.blocks 
+    @stat.blocks
   end
 
   def ftype
-    ftype_key = File.ftype(@file_name)
+    ftype_key = File.ftype(@name)
     TYPES[ftype_key]
   end
 
   def permissions
-    permission_numbers = @file_stat.mode.to_s(8).slice(-3, 3).chars
-    permission_numbers.map { |num| PERMISSIONS[num] }.join
+    permission_numbers = @stat.mode.to_s(8).slice(-3, 3)
+    permission_numbers.gsub(/[0-7]/, PERMISSIONS)
   end
 
   def nlink
-    @file_stat.nlink
+    @stat.nlink
   end
 
   def owner
-    Etc.getpwuid(@file_stat.uid).name
+    Etc.getpwuid(@stat.uid).name
   end
 
   def group
-    Etc.getgrgid(@file_stat.gid).name
+    Etc.getgrgid(@stat.gid).name
   end
 
   def size
-    @file_stat.size
+    @stat.size
   end
 
   def mtime
-    @file_stat.mtime
+    @stat.mtime
   end
 end
