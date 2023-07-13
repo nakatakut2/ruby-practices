@@ -6,7 +6,7 @@ class Outputter
   COLUMNS = 3
 
   def initialize(file_names)
-    @file_names = file_names
+    @file_details = file_names.map { |file_name| FileDetail.new(file_name) }
   end
 
   def output(long: false)
@@ -17,48 +17,44 @@ class Outputter
 
   def long_output
     puts "total #{total_blocks}"
-    @file_names.each do |file_name|
-      puts long_format(file_detail(file_name))
+    @file_details.each do |file_detail|
+      puts long_format(file_detail)
     end
   end
 
   def no_option_output
-    formatted_names.each do |names|
-      names.compact.each { |name| print name.ljust(30) }
+    formatted_files.each do |files|
+      files.compact.each { |file| print file.name.ljust(30) }
       puts "\n"
     end
   end
 
-  def file_detail(file_name)
-    FileDetail.new(file_name)
-  end
-
   def total_blocks
-    @file_names.sum { |file_name| file_detail(file_name).blocks }
+    @file_details.sum { |file_detail| file_detail.blocks }
   end
 
-  def long_format(file)
+  def long_format(file_detail)
     [
-      file.ftype,
-      file.permissions,
-      file.nlink.to_s.rjust(3),
+      file_detail.ftype,
+      file_detail.permissions,
+      file_detail.nlink.to_s.rjust(3),
       ' ',
-      file.owner,
+      file_detail.owner,
       '  ',
-      file.group,
-      file.size.to_s.rjust(6),
+      file_detail.group,
+      file_detail.size.to_s.rjust(6),
       ' ',
-      file.mtime.strftime('%m %e %H:%M'),
+      file_detail.mtime.strftime('%m %e %H:%M'),
       ' ',
-      file.name
+      file_detail.name
     ].join
   end
 
-  def formatted_names
-    total_number = @file_names.size
+  def formatted_files
+    total_number = @file_details.size
     slice = (total_number.to_f / COLUMNS).ceil
-    nested_file_names = @file_names.each_slice(slice).to_a
-    nested_file_names[0].zip(*nested_file_names[1..])
+    nested_file_details = @file_details.each_slice(slice).to_a
+    nested_file_details[0].zip(*nested_file_details[1..])
   end
 
 end
