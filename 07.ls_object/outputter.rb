@@ -10,30 +10,27 @@ class Outputter
   end
 
   def output(long: false)
-    if long
-      puts "total #{total_blocks}"
-      @file_names.each do |file_name|
-        puts long_format(file_detail(file_name))
-      end
-    else
-      formatted_names.each do |names|
-        names.compact.each { |name| print name.ljust(30) }
-        puts "\n"
-      end
-    end
+    long ? long_output : no_option_output
   end
 
   private
 
-  def file_detail(file_name)
-    FileDetail.new(file_name)
+  def long_output
+    puts "total #{total_blocks}"
+    @file_names.each do |file_name|
+      puts long_format(file_detail(file_name))
+    end
   end
 
-  def formatted_names
-    total_number = @file_names.size
-    slice = (total_number / COLUMNS).ceil
-    molding_array = @file_names.each_slice(slice).to_a
-    molding_array[0].zip(*molding_array[1..])
+  def no_option_output
+    formatted_names.each do |names|
+      names.compact.each { |name| print name.ljust(30) }
+      puts "\n"
+    end
+  end
+
+  def file_detail(file_name)
+    FileDetail.new(file_name)
   end
 
   def total_blocks
@@ -56,4 +53,12 @@ class Outputter
       file.name
     ].join
   end
+
+  def formatted_names
+    total_number = @file_names.size
+    slice = (total_number.to_f / COLUMNS).ceil
+    nested_file_names = @file_names.each_slice(slice).to_a
+    nested_file_names[0].zip(*nested_file_names[1..])
+  end
+
 end
