@@ -4,6 +4,7 @@ require_relative 'file_detail'
 
 class Outputter
   COLUMNS = 3
+  CHAR_WIDTH = 30
 
   def initialize(file_names)
     @file_details = file_names.map { |file_name| FileDetail.new(file_name) }
@@ -16,7 +17,7 @@ class Outputter
   private
 
   def long_output
-    puts "total #{total_blocks}"
+    puts "total #{@file_details.sum(&:blocks)}"
     @file_details.each do |file_detail|
       puts long_format(file_detail)
     end
@@ -24,13 +25,9 @@ class Outputter
 
   def no_option_output
     formatted_files.each do |files|
-      files.compact.each { |file| print file.name.ljust(30) }
+      files.compact.each { |file| print file.name.ljust(CHAR_WIDTH) }
       puts "\n"
     end
-  end
-
-  def total_blocks
-    @file_details.sum { |file_detail| file_detail.blocks }
   end
 
   def long_format(file_detail)
@@ -56,5 +53,4 @@ class Outputter
     nested_file_details = @file_details.each_slice(slice).to_a
     nested_file_details[0].zip(*nested_file_details[1..])
   end
-
 end
