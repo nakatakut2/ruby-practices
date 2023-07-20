@@ -41,7 +41,7 @@ class Outputter
       file_detail.group,
       file_detail.size.to_s.rjust(6),
       ' ',
-      file_detail.mtime.strftime('%m %e %H:%M'),
+      file_detail.mtime.strftime('%_m %_e %H:%M'),
       ' ',
       file_detail.name
     ].join
